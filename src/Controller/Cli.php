@@ -60,16 +60,34 @@ class Cli extends BaseClass
     private function renderReport() {
         $layout = new Layout();
 
+        $totalChart = new HighCharts();
+        $totalChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>Summary</h2>'));
+        $layout->content->push($totalChart);
+
+
         $cpuChart = new HighCharts();
         $cpuChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>%CPU</h2>'));
+        $layout->content->push($cpuChart);
 
         $memChart = new HighCharts();
         $memChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>%MEM</h2>'));
+        $layout->content->push($memChart);
+
+        $rssChart = new HighCharts();
+        $rssChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>RSS</h2>'));
+        $layout->content->push($rssChart);
 
         $pidList = '';
 
-        $layout->content->push($cpuChart);
-        $layout->content->push($memChart);
+        foreach ($this->history->totals as $ut => $state) {
+            $ut = 1000 * $ut;
+            $totalChart->addRow($ut, $state->cpuPercent, '%CPU');
+            $totalChart->addRow($ut, $state->memPercent, '%MEM');
+        }
 
         foreach ($this->history->states as $pid => $pidData) {
             $process = $this->history->processes[$pid];
@@ -84,9 +102,10 @@ class Cli extends BaseClass
                 $ut = 1000 * $ut;
                 $cpuChart->addRow($ut, $state->cpuPercent, $process->getShortName());
                 $memChart->addRow($ut, $state->memPercent, $process->getShortName());
-
+                $rssChart->addRow($ut, $state->rss, $process->getShortName());
             }
         }
+
 
         $layout->content->push(new Raw($pidList));
 

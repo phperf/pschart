@@ -21,6 +21,9 @@ class History
     public $programs;
     public $states = array();
 
+    /** @var State[]  */
+    public $totals = array();
+
 
 
     /**
@@ -30,7 +33,16 @@ class History
 
         $now = $this->time->now();
 
+        $total = new State();
+
         foreach ($states as $processState) {
+            $total->memPercent += $processState->memPercent;
+            $total->cpuPercent += $processState->cpuPercent;
+
+            if ($processState->command === 'ps aux') {
+                continue;
+            }
+
             if ($this->minCpuPercent && $processState->cpuPercent < $this->minCpuPercent) {
                 //echo 'l';
                 continue;
@@ -68,6 +80,7 @@ class History
             $this->states [$process->pid][$now]= $state;
         }
 
+        $this->totals [$now]= $total;
     }
 
 }

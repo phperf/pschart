@@ -35,7 +35,7 @@ class Layout extends BaseClass implements Renderer
         ?>
 <html>
 <head>
-    <title>$this->sessionTitle</title>
+    <title><?=gethostname()?></title>
     <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
     <script src="http://code.highcharts.com/stock/highstock.js"></script>
     <script src="http://code.highcharts.com/highcharts.js"></script>

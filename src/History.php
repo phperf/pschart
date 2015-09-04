@@ -31,20 +31,21 @@ class History
         $now = $this->time->now();
 
         foreach ($states as $processState) {
+            if ($this->minCpuPercent && $processState->cpuPercent < $this->minCpuPercent) {
+                //echo 'l';
+                continue;
+            }
+
+            if ($this->minMemPercent && $processState->memPercent < $this->minMemPercent) {
+                //echo 'l';
+                continue;
+            }
+
+
             if (isset($this->processes[$processState->pid])) {
                 $process = $this->processes[$processState->pid];
             }
             else {
-                if ($this->minCpuPercent && $processState->cpuPercent < $this->minCpuPercent) {
-                    //echo 'l';
-                    continue;
-                }
-
-                if ($this->minMemPercent && $processState->memPercent < $this->minMemPercent) {
-                    //echo 'l';
-                    continue;
-                }
-
                 $process = new Process();
                 $process->user = $processState->user;
                 $process->command = $processState->command;

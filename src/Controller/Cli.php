@@ -60,10 +60,36 @@ class Cli extends BaseClass
     private function renderReport() {
         $layout = new Layout();
 
-        $totalChart = new HighCharts();
-        $totalChart->withDateAxis();
-        $layout->content->push(new Raw('<h2>Summary</h2>'));
-        $layout->content->push($totalChart);
+        $totalCpuChart = new HighCharts();
+        $totalCpuChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>Summary %CPU</h2>'));
+        $layout->content->push($totalCpuChart);
+
+        $totalMemChart = new HighCharts();
+        $totalMemChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>Summary %MEM</h2>'));
+        $layout->content->push($totalMemChart);
+
+
+
+
+        $cpuGChart = new HighCharts();
+        $cpuGChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>%CPU (grouped)</h2>'));
+        $layout->content->push($cpuGChart);
+
+        $memGChart = new HighCharts();
+        $memGChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>%MEM (grouped)</h2>'));
+        $layout->content->push($memGChart);
+
+        $rssGChart = new HighCharts();
+        $rssGChart->withDateAxis();
+        $layout->content->push(new Raw('<h2>RSS (grouped)</h2>'));
+        $layout->content->push($rssGChart);
+
+
+
 
 
         $cpuChart = new HighCharts();
@@ -81,12 +107,13 @@ class Cli extends BaseClass
         $layout->content->push(new Raw('<h2>RSS</h2>'));
         $layout->content->push($rssChart);
 
+
         $pidList = '';
 
         foreach ($this->history->totals as $ut => $state) {
             $ut = 1000 * $ut;
-            $totalChart->addRow($ut, $state->cpuPercent, '%CPU');
-            $totalChart->addRow($ut, $state->memPercent, '%MEM');
+            $totalCpuChart->addRow($ut, $state->cpuPercent, '%CPU');
+            $totalMemChart->addRow($ut, $state->memPercent, '%MEM');
         }
 
         foreach ($this->history->states as $pid => $pidData) {
@@ -105,6 +132,20 @@ class Cli extends BaseClass
                 $rssChart->addRow($ut, $state->rss, $process->getShortName());
             }
         }
+
+        foreach ($this->history->groupStates as $name => $data) {
+            /**
+             * @var int $ut
+             * @var State $state
+             */
+            foreach ($data as $ut => $state) {
+                $ut = 1000 * $ut;
+                $cpuGChart->addRow($ut, $state->cpuPercent, $name);
+                $memGChart->addRow($ut, $state->memPercent, $name);
+                $rssGChart->addRow($ut, $state->rss, $name);
+            }
+        }
+
 
 
         $layout->content->push(new Raw($pidList));

@@ -18,8 +18,9 @@ class History
     public $time;
     /** @var  Process[] */
     public $processes;
-    public $programs;
+    public $groups;
     public $states = array();
+    public $groupStates = array();
 
     /** @var State[]  */
     public $totals = array();
@@ -35,12 +36,23 @@ class History
 
         $total = new State();
 
+        /** @var State[] $groups */
+        $groups = array();
+
         foreach ($states as $processState) {
             $total->memPercent += $processState->memPercent;
             $total->cpuPercent += $processState->cpuPercent;
 
             if ($processState->command === 'ps aux') {
                 continue;
+            }
+
+            $group = &$groups[$processState->getProgramName()];
+            if (null === $group) {
+                $group = new State();
+                $group->memPercent += $processState->memPercent;
+                $group->cpuPercent += $processState->cpuPercent;
+                $group->rss += $processState->rss;
             }
 
             if ($this->minCpuPercent && $processState->cpuPercent < $this->minCpuPercent) {
@@ -78,6 +90,20 @@ class History
             $state->tt = $processState->tt;
             $state->vsz = $processState->vsz;
             $this->states [$process->pid][$now]= $state;
+        }
+
+        foreach ($groups as $name => $state) {
+            if ($this->minCpuPercent && $state->cpuPercent < $this->minCpuPercent) {
+                //echo 'l';
+                continue;
+            }
+
+            if ($this->minMemPercent && $state->memPercent < $this->minMemPercent) {
+                //echo 'l';
+                continue;
+            }
+
+            $this->groupStates [$name][$now] = $state;
         }
 
         $this->totals [$now]= $total;

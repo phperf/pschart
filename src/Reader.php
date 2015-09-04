@@ -42,6 +42,9 @@ class Reader implements Able
             $info[$field] .= ' ' . implode(' ', $data);
             //print_r($info);
 
+            //USER       PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+            //root         1  0.0  0.0  21452  1068 ?        Ss    2014   1:02 /sbin/init
+
             $processInfo = new ProcessState();
             $processInfo->user = $info['USER'];
             $processInfo->pid = $info['PID'];
@@ -49,9 +52,9 @@ class Reader implements Able
             $processInfo->memPercent = $info['%MEM'];
             $processInfo->vsz = $info['VSZ'];
             $processInfo->rss = $info['RSS'];
-            $processInfo->tt = $info['TT'];
+            //$processInfo->tt = $info['TT'];
             $processInfo->stat = $info['STAT'];
-            $processInfo->started = $info['STARTED'];
+            //$processInfo->started = $info['STARTED'];
             $processInfo->time = $info['TIME'];
             $processInfo->command = $info['COMMAND'];
 

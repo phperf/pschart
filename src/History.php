@@ -50,10 +50,10 @@ class History
             $group = &$groups[$processState->getProgramName()];
             if (null === $group) {
                 $group = new State();
-                $group->memPercent += $processState->memPercent;
-                $group->cpuPercent += $processState->cpuPercent;
-                $group->rss += $processState->rss;
             }
+            $group->memPercent += $processState->memPercent;
+            $group->cpuPercent += $processState->cpuPercent;
+            $group->rss += $processState->rss;
 
             if ($this->minCpuPercent && $processState->cpuPercent < $this->minCpuPercent) {
                 //echo 'l';

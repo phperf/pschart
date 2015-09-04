@@ -10,6 +10,7 @@ use Phperf\Ps\View\Layout;
 use Yaoi\BaseClass;
 use Yaoi\Date\TimeMachine;
 use Phperf\Ps\View\HighCharts;
+use Yaoi\View\Raw;
 
 class Cli extends BaseClass
 {
@@ -65,11 +66,15 @@ class Cli extends BaseClass
         $memChart = new HighCharts();
         $memChart->withDateAxis();
 
+        $pidList = '';
+
         $layout->content->push($cpuChart);
         $layout->content->push($memChart);
 
         foreach ($this->history->states as $pid => $pidData) {
             $process = $this->history->processes[$pid];
+
+            $pidList .= '<p><b>'.$process->getShortName().'</b> ' . $process->command . '</p>';
 
             /**
              * @var int $ut
@@ -82,6 +87,8 @@ class Cli extends BaseClass
 
             }
         }
+
+        $layout->content->push(new Raw($pidList));
 
         file_put_contents('report.html', $layout);
     }

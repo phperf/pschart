@@ -1,0 +1,13 @@
+{
+    "autoload": {
+        "psr-4": {
+            "Phperf\\Ps\\": "src/"
+        }
+    },
+    "require": {
+        "php-yaoi/php-yaoi": "^1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    }
+}

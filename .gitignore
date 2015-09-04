@@ -1,0 +1,4 @@
+vendor
+composer.lock
+.idea
+report.html
